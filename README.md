@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/f3cl7slwdhpv573q?svg=true)](https://ci.appveyor.com/project/fpschultze/base64)
+
 # Base64 PowerShell Module
 Converting text to base64 and reverse.
 
