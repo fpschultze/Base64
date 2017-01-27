@@ -3,7 +3,7 @@ Update-TypeData -TypeName System.String -MemberType ScriptMethod -MemberName ToB
   $ErrorActionPreference = 'Stop'
   try
   {
-    [System.Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes($this))
+#    [System.Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes($this))
   }
   catch
   {
