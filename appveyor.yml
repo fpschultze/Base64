@@ -8,4 +8,5 @@ install:
   - cinst pester
 build: off
 test_script:
-  - ps: Invoke-Pester -Path .\tests
+  - ps: . .\tests\appveyor.pester.ps1 -Test
+  - ps: . .\tests\appveyor.pester.ps1 -Finalize
