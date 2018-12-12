@@ -7,5 +7,5 @@ skip_commits:
 install:
   - cinst pester
 build: off
-build_script:
+test_script:
   - ps: Invoke-Pester -Path .\tests
