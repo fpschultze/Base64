@@ -1,15 +1,11 @@
 # See http://www.appveyor.com/docs/appveyor-yml for many more options
-
 # Skip on updates to .md files.
 # We can force this by adding [skip ci] or [ci skip] anywhere in commit message
 skip_commits:
   files:
     - '**/*.md'
-
 install:
   - cinst pester
-
 build: off
-
-test_script:
-    - ps: Invoke-Pester -Path .\tests
+build_script:
+  - ps: Invoke-Pester -Path .\tests
