@@ -5,8 +5,7 @@ skip_commits:
   files:
     - '**/*.md'
 install:
-  - cinst pester
-build: off
+  - cinst pester -y
 test_script:
   - ps: . .\tests\appveyor.pester.ps1 -Test
   - ps: . .\tests\appveyor.pester.ps1 -Finalize
