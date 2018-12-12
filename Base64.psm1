@@ -1,32 +1,39 @@
-﻿# Add 'ToBase64String' method to System.String
+# Add 'ToBase64String' method to System.String
 Update-TypeData -TypeName System.String -MemberType ScriptMethod -MemberName ToBase64String -Value {
-  $ErrorActionPreference = 'Stop'
-  try
-  {
-    [System.Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes($this))
-  }
-  catch
-  {
-    $_.Exception.Message | Write-Warning
-  }
+    param(
+        [Parameter()]
+        [ValidateSet('ASCII', 'BigEndianUnicode', 'Default', 'Unicode', 'UTF32', 'UTF7', 'UTF8')]
+        [string]
+        $Encoding = 'Default'
+    )
+    $ErrorActionPreference = 'Stop'
+    try {
+        [System.Convert]::ToBase64String([System.Text.Encoding]::$Encoding.GetBytes($this))
+    }
+    catch {
+        $_.Exception.Message | Write-Warning
+    }
 }
 
 # Add 'FromBase64String' method to System.String
 Update-TypeData -TypeName System.String -MemberType ScriptMethod -MemberName FromBase64String -Value {
-  $ErrorActionPreference = 'Stop'
-  try
-  {
-    [System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String($this))
-  }
-  catch
-  {
-    $_.Exception.Message | Write-Warning
-  }
+    param(
+        [Parameter()]
+        [ValidateSet('ASCII', 'BigEndianUnicode', 'Default', 'Unicode', 'UTF32', 'UTF7', 'UTF8')]
+        [string]
+        $Encoding = 'Default'
+    )
+    $ErrorActionPreference = 'Stop'
+    try {
+        [System.Text.Encoding]::$Encoding.GetString([System.Convert]::FromBase64String($this))
+    }
+    catch {
+        $_.Exception.Message | Write-Warning
+    }
 }
 
-function ConvertTo-Base64String
-{
-  <#
+function ConvertTo-Base64String {
+    <#
     .SYNOPSIS
     Converts the given text to a Base64 string.
 
@@ -44,23 +51,26 @@ function ConvertTo-Base64String
     System.String
   #>
 
-  [OutputType([String])]
-  param
-  (
-    [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
-    [ValidateNotNullOrEmpty()]
-    [String]
-    $Text
-  )
-  process
-  {
-    $Text.ToBase64String()
-  }
+    [OutputType([String])]
+    param
+    (
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [ValidateNotNullOrEmpty()]
+        [String]
+        $Text,
+
+        [Parameter()]
+        [ValidateSet('ASCII', 'BigEndianUnicode', 'Default', 'Unicode', 'UTF32', 'UTF7', 'UTF8')]
+        [string]
+        $Encoding = 'Default'
+    )
+    process {
+        $Text.ToBase64String($Encoding)
+    }
 }
 
-function ConvertFrom-Base64String
-{
-  <#
+function ConvertFrom-Base64String {
+    <#
     .SYNOPSIS
     Converts the given Base64 encoded text to the original text.
 
@@ -78,16 +88,21 @@ function ConvertFrom-Base64String
     System.String
   #>
 
-  [OutputType([String])]
-  param
-  (
-    [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
-    [ValidateNotNullOrEmpty()]
-    [String]
-    $Text
-  )
-  process
-  {
-    $Text.FromBase64String()
-  }
+    [OutputType([String])]
+    param
+    (
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [ValidateNotNullOrEmpty()]
+        [String]
+        $Text,
+
+        [Parameter()]
+        [ValidateSet('ASCII', 'BigEndianUnicode', 'Default', 'Unicode', 'UTF32', 'UTF7', 'UTF8')]
+        [string]
+        $Encoding = 'Default'
+
+    )
+    process {
+        $Text.FromBase64String($Encoding)
+    }
 }
