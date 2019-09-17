@@ -27,8 +27,8 @@
     # FileList = @()
     PrivateData       = @{
         PSData = @{
-            Tags         = @('Base64', 'Encoding')
-            # LicenseUri = ''
+            Tags         = @('Base64', 'Encoding', 'PSEdition_Desktop', 'Windows')
+            LicenseUri   = 'http://www.apache.org/licenses/LICENSE-2.0'
             ProjectUri   = 'https://github.com/fpschultze/Base64'
             # IconUri = ''
             ReleaseNotes = 'Added Encoding parameter'
