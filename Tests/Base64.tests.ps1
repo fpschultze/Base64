@@ -11,6 +11,11 @@ $TestBase64UTF32 = 'RwAAAGUAAAB0AAAALQAAAEMAAABoAAAAaQAAAGwAAABkAAAASQAAAHQAAABl
 $TestBase64UTF7 = 'R2V0LUNoaWxkSXRlbSArQUNRLWVudjpURU1QICtBSHctID8rQUhzQUpBQmYtLkxhc3RXcml0ZVRpbWUgLWx0IChHZXQtRGF0ZSkuQWRkRGF5cygtMSkrQUgwLQ=='
 $TestBase64UTF8 = 'R2V0LUNoaWxkSXRlbSAkZW52OlRFTVAgfCA/eyRfLkxhc3RXcml0ZVRpbWUgLWx0IChHZXQtRGF0ZSkuQWRkRGF5cygtMSl9'
 
+$TestBinFile1 = '{0}\file1.bin' -f $env:TEMP
+$TestBinFile2 = '{0}\file2.bin' -f $env:TEMP
+$TestBinData = New-Object byte[] 1024
+(New-Object System.Random).NextBytes($TestBinData)
+
 Describe 'ConvertTo-Base64String' {
     Context 'Running without Encoding parameter' {
         It 'does return Base64 encoded text (Default encoding)' {
@@ -58,6 +63,18 @@ Describe 'ConvertFrom-Base64String' {
     Context 'Running with non-base64 arguments' {
         It 'does not return anything and displays warning' {
             ConvertFrom-Base64String $TestText | Should BeNullOrEmpty
+        }
+    }
+}
+
+Describe 'ConvertFrom-BinaryFile and ConvertTo-BinaryFile' {
+    Context "Roundtrip binary file, base64, other binary file" {
+        [IO.File]::WriteAllBytes($TestBinFile1, $TestBinData)
+        Get-ChildItem -Path $TestBinFile1 | ConvertFrom-BinaryFile | ConvertTo-BinaryFile -Destination $TestBinFile2
+        It "creates an exact copy of the binary file" {
+            Get-FileHash -Path $TestBinFile1, $TestBinFile2 |
+                Group-Object -Property Hash |
+                Select-Object -ExpandProperty Count -First 1 | Should Be 2
         }
     }
 }
