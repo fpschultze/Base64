@@ -33,6 +33,7 @@ Update-TypeData -TypeName System.String -MemberType ScriptMethod -MemberName Fro
 }
 
 function ConvertTo-Base64String {
+
     <#
     .SYNOPSIS
     Converts the given text to a Base64 string.
@@ -49,7 +50,7 @@ function ConvertTo-Base64String {
 
     .OUTPUTS
     System.String
-  #>
+    #>
 
     [OutputType([String])]
     param
@@ -70,6 +71,7 @@ function ConvertTo-Base64String {
 }
 
 function ConvertFrom-Base64String {
+
     <#
     .SYNOPSIS
     Converts the given Base64 encoded text to the original text.
@@ -86,7 +88,7 @@ function ConvertFrom-Base64String {
 
     .OUTPUTS
     System.String
-  #>
+    #>
 
     [OutputType([String])]
     param
@@ -100,9 +102,84 @@ function ConvertFrom-Base64String {
         [ValidateSet('ASCII', 'BigEndianUnicode', 'Default', 'Unicode', 'UTF32', 'UTF7', 'UTF8')]
         [string]
         $Encoding = 'Default'
-
     )
     process {
         $Text.FromBase64String($Encoding)
     }
+}
+
+
+function ConvertFrom-BinaryFile {
+
+    <#
+    .SYNOPSIS
+    Convert a given binary file to Base64 string.
+
+    .DESCRIPTION
+    Base64-encodes binary data. The resulting textual representation can be encrypted with Protect-CmsMessage, for exmaple.
+
+    .EXAMPLE
+    dir .\secret.exe | ConvertFrom-BinaryFile | Protect-CmsMessage -To .\pubkey.cer -OutFile OutputFile.cms
+
+    Convert the binary file to Base64 strings, then encrypt:
+
+    .INPUTS
+    System.IO.FileInfo
+
+    .OUTPUTS
+    System.String
+    #>
+
+    [CmdletBinding()]
+    Param (
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        $Path,
+
+        [switch]
+        $InsertLineBreaks
+    )
+
+    if ($InsertLineBreaks) {
+
+        $option = [System.Base64FormattingOptions]::InsertLineBreaks
+    }
+    else {
+
+        $option = [System.Base64FormattingOptions]::None
+    }
+
+    $content = Get-Content -ReadCount 0 -Encoding Byte -Path $Path
+
+    [System.Convert]::ToBase64String($content, $option)
+}
+
+
+function ConvertTo-BinaryFile {
+
+    <#
+    .SYNOPSIS
+    Convert a given Base64 string to binary file.
+
+    .DESCRIPTION
+    Converts Base64-encoded data to a binary file.
+
+    .EXAMPLE
+    Unprotect-CmsMessage -Path .\OutputFile.cms | ConvertTo-BinaryFile -OutputFilePath .\RestoredFile.exe
+
+    Decrypt CMS message, and convert the resulting Base64 back into a binary file.
+
+    .INPUTS
+        System.String
+    #>
+
+    [CmdletBinding()]
+    Param(
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        $String,
+
+        [Parameter(Mandatory = $true)]
+        $Destination
+    )
+
+    [System.Convert]::FromBase64String($String) | Set-Content -Path $Destination -Encoding Byte
 }
